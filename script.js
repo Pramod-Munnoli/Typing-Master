@@ -52,36 +52,56 @@ function renderText(text) {
 
 // 🔹 Typing logic
 function initTyping() {
-  const characters = typingText.querySelectorAll("span");
-  const typedChar = input.value.charAt(charIndex);
-
-  if (charIndex < characters.length && timeLeft > 0) {
-    if (!isTyping) {
-      timer = setInterval(initTimer, 1000);
-      isTyping = true;
-    }
-
-    if (typedChar === characters[charIndex].innerText) {
-      characters[charIndex].classList.add("correct");
-    } else {
-      characters[charIndex].classList.add("incorrect");
-      mistakes++;
-      mistakesTag.innerText = mistakes;
-    }
-
-    characters[charIndex].classList.remove("active");
-    charIndex++;
-
-    if (charIndex < characters.length) {
+    const characters = typingText.querySelectorAll("span");
+    const typedChar = input.value.charAt(charIndex);
+  
+    // ✅ HANDLE BACKSPACE
+    if (input.value.length < charIndex) {
+      charIndex--;
+  
+      if (characters[charIndex].classList.contains("incorrect")) {
+        mistakes--;
+        mistakesTag.innerText = mistakes;
+      }
+  
+      characters[charIndex].classList.remove("correct", "incorrect");
+  
+      characters.forEach(span => span.classList.remove("active"));
       characters[charIndex].classList.add("active");
+  
+      cpmTag.innerText = Math.max(0, charIndex - mistakes);
+      return;
     }
-
-    cpmTag.innerText = charIndex - mistakes;
-  } else {
-    clearInterval(timer);
-    input.blur();
+  
+    // ✅ NORMAL TYPING
+    if (charIndex < characters.length && timeLeft > 0) {
+      if (!isTyping) {
+        timer = setInterval(initTimer, 1000);
+        isTyping = true;
+      }
+  
+      if (typedChar === characters[charIndex].innerText) {
+        characters[charIndex].classList.add("correct");
+      } else {
+        characters[charIndex].classList.add("incorrect");
+        mistakes++;
+        mistakesTag.innerText = mistakes;
+      }
+  
+      characters[charIndex].classList.remove("active");
+      charIndex++;
+  
+      if (charIndex < characters.length) {
+        characters[charIndex].classList.add("active");
+      }
+  
+      cpmTag.innerText = Math.max(0, charIndex - mistakes);
+    } else {
+      clearInterval(timer);
+      input.blur();
+    }
   }
-}
+  
 
 // 🔹 Timer
 function initTimer() {
