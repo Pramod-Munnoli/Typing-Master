@@ -52,55 +52,54 @@ function renderText(text) {
 
 // 🔹 Typing logic
 function initTyping() {
-    const characters = typingText.querySelectorAll("span");
-    const typedChar = input.value.charAt(charIndex);
-  
-    // ✅ HANDLE BACKSPACE
-    if (input.value.length < charIndex) {
-      charIndex--;
-  
-      if (characters[charIndex].classList.contains("incorrect")) {
-        mistakes--;
-        mistakesTag.innerText = mistakes;
-      }
-  
-      characters[charIndex].classList.remove("correct", "incorrect");
-  
-      characters.forEach(span => span.classList.remove("active"));
-      characters[charIndex].classList.add("active");
-  
-      cpmTag.innerText = Math.max(0, charIndex - mistakes);
-      return;
+  const characters = typingText.querySelectorAll("span");
+  const typedChar = input.value.charAt(charIndex);
+
+  // ✅ BACKSPACE
+  if (input.value.length < charIndex) {
+    charIndex--;
+
+    if (characters[charIndex].classList.contains("incorrect")) {
+      mistakes--;
+      mistakesTag.innerText = mistakes;
     }
-  
-    // ✅ NORMAL TYPING
-    if (charIndex < characters.length && timeLeft > 0) {
-      if (!isTyping) {
-        timer = setInterval(initTimer, 1000);
-        isTyping = true;
-      }
-  
-      if (typedChar === characters[charIndex].innerText) {
-        characters[charIndex].classList.add("correct");
-      } else {
-        characters[charIndex].classList.add("incorrect");
-        mistakes++;
-        mistakesTag.innerText = mistakes;
-      }
-  
-      characters[charIndex].classList.remove("active");
-      charIndex++;
-  
-      if (charIndex < characters.length) {
-        characters[charIndex].classList.add("active");
-      }
-  
-      cpmTag.innerText = Math.max(0, charIndex - mistakes);
-    } else {
-      clearInterval(timer);
-      input.blur();
-    }
+
+    characters[charIndex].classList.remove("correct", "incorrect");
+    characters.forEach(span => span.classList.remove("active"));
+    characters[charIndex].classList.add("active");
+
+    input.value = input.value.slice(0, charIndex);
+    cpmTag.innerText = Math.max(0, charIndex - mistakes);
+    return;
   }
+
+  // ✅ NORMAL TYPING
+  if (charIndex < characters.length && timeLeft > 0) {
+    if (!isTyping) {
+      timer = setInterval(initTimer, 1000);
+      isTyping = true;
+    }
+
+    if (typedChar === characters[charIndex].innerText) {
+      characters[charIndex].classList.add("correct");
+    } else {
+      characters[charIndex].classList.add("incorrect");
+      mistakes++;
+      mistakesTag.innerText = mistakes;
+    }
+
+    characters[charIndex].classList.remove("active");
+    charIndex++;
+
+    if (charIndex < characters.length) {
+      characters[charIndex].classList.add("active");
+    }
+
+    input.value = input.value.slice(0, charIndex);
+    cpmTag.innerText = Math.max(0, charIndex - mistakes);
+  }
+}
+
   
 
 // 🔹 Timer
@@ -135,7 +134,16 @@ function resetGame() {
 // Events
 input.addEventListener("input", initTyping);
 btn.addEventListener("click", resetGame);
-document.addEventListener("keydown", () => input.focus());
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Backspace" && document.activeElement !== input) {
+    e.preventDefault();
+  }
+
+  if (e.key === "Backspace" || e.key.length === 1) {
+    input.focus();
+  }
+});
+
 
 // Init
 loadParagraph();
