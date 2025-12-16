@@ -6,7 +6,7 @@ It measures typing speed (WPM, CPM), mistakes, and time while fetching **random 
 ---
 ## 🔗 Live Demo
 
-🌐 **Live Preview:** [Click here to view the website](https://pramod-munnoli.github.io/Weather-App/)
+🌐 **Live Preview:** [Click here to view the website](https://pramod-munnoli.github.io/Typing-Master/)
 
 ---
 ## 🚀 Features
